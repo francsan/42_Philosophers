@@ -6,7 +6,7 @@
 /*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/02/01 20:37:11 by francsan         ###   ########.fr       */
+/*   Updated: 2023/02/01 22:34:50 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,35 @@
 // pthread_mutex_lock, pthread_mutex_unlock
 # include <pthread.h>
 
+/* errors */
+
+# define ERR "Error\n"
+
 /* structs */
 
+typedef struct t_philo {
+	int				n;
+	pthread_t		t_id;
+	struct t_philo	*next;
+	struct t_philo	*prev;
+}	t_philo;
+
+typedef struct t_data {
+	int				philo_num;
+	int				die_time;
+	int				eat_time;
+	int				sleep_time;
+	int				eat_times;
+	int				time;
+	struct t_philo	*head;
+	struct t_philo	*tail;
+}	t_data;
+
 /* sources */
+
+// utils.c
+size_t	ft_strlen(const char *s);
+int		ft_atoi(const char *str);
+void	error_msg(char *error);
 
 #endif

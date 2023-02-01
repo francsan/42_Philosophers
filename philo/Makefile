@@ -8,7 +8,7 @@ RM			=	rm -rf
 HEADER_F	=	philo.h
 HEADER_DIR	=	headers/
 HEADER		=	$(addprefix $(HEADER_DIR), $(HEADER_F))
-SOURCE_F	=	main.c
+SOURCE_F	=	main.c utils.c
 SOURCE_DIR	=	sources/
 SOURCE		=	$(addprefix $(SOURCE_DIR), $(SOURCE_F))
 
@@ -20,7 +20,7 @@ OBJS		=	$(SOURCE:.c=.o)
 				@${CC} ${FLAGS} -c $< -o $@
 
 $(NAME):		$(OBJS)
-				@$(CC) $(OBJS) -o $(NAME)
+				@$(CC) $(OBJS) -lpthread -o $(NAME)
 				@echo "$(GREEN)$(NAME) created!$(DEFAULT)"
 
 all:			$(NAME)
