@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 21:12:52 by francsan          #+#    #+#             */
-/*   Updated: 2023/02/01 22:56:42 by francsan         ###   ########.fr       */
+/*   Updated: 2023/02/08 19:14:46 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,14 @@ void	*myThread(void *vargp)
 
 	philo = (t_philo **)vargp;
 	printf("%d\n", (*philo)->n);
+	usleep(50);
 	return (NULL);
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	*d;
+	int		i;
 
 	if (argc < 5)
 		return (0);
@@ -38,10 +40,31 @@ int	main(int argc, char **argv)
 		d->eat_times = 0;
 	d->time = 0;
 
-	d->tail = malloc(sizeof(t_philo));
-	d->tail->n = 1;
-	pthread_create(&d->tail->t_id, NULL, myThread, (void *)&d->tail);
-	pthread_join(d->tail->t_id, NULL);
+	i = 1;
+	while (i <= d->philo_num)
+	{
+		if (i == 1)
+			init_list(&d->tail, &d->head, i);
+		else
+			add_node_head(&d->head, i);
+		i++;
+	}
+
+	t_philo	*curr;
+	curr = d->tail;
+	while (curr != NULL)
+	{
+		pthread_create(&curr->t_id, NULL, myThread, (void *)&curr);
+		curr = curr->next;
+	}
+
+	curr = d->tail;
+	while (curr != NULL)
+	{
+		pthread_join(curr->t_id, NULL);
+		curr = curr->next;
+	}
+
 	free(d);
 	return (0);
 }

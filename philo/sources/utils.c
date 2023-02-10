@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 21:58:51 by francsan          #+#    #+#             */
-/*   Updated: 2023/02/01 22:04:51 by francsan         ###   ########.fr       */
+/*   Updated: 2023/02/08 18:21:20 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,33 @@ int	ft_atoi(const char *str)
 			error_msg(ERR);
 	}
 	return (i * j);
+}
+
+void	*ft_memset(void *b, int c, size_t len)
+{
+	unsigned char	*str;
+
+	str = (unsigned char *)b;
+	while (len > 0)
+	{
+		*str = (unsigned char)c;
+		str++;
+		len--;
+	}
+	return (b);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	size_t	total_size;
+	void	*dst;
+
+	total_size = size * count;
+	dst = malloc(total_size);
+	if (dst == NULL)
+		return (0);
+	ft_memset(dst, 0, total_size);
+	return (dst);
 }
 
 void	error_msg(char *error)
