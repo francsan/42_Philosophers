@@ -36,32 +36,18 @@
 
 /* structs */
 
-typedef struct t_philo {
-	int				n;
-	pthread_t		t_id;
-	struct t_philo	*next;
-	struct t_philo	*prev;
-}	t_philo;
-
 typedef struct t_data {
+	pthread_t		*philo;
+	pthread_mutex_t	*fork;
 	int				philo_num;
 	int				die_time;
 	int				eat_time;
 	int				sleep_time;
 	int				eat_times;
 	int				time;
-	struct t_philo	*head;
-	struct t_philo	*tail;
 }	t_data;
 
 /* sources */
-
-// list_utils.c
-void	free_list(t_philo **tail, t_philo **head);
-void	remove_node(t_philo *node);
-void	add_node_tail(t_philo **tail, int n);
-void	add_node_head(t_philo **head, int n);
-void	init_list(t_philo **tail, t_philo **head, int n);
 
 // utils.c
 size_t	ft_strlen(const char *s);
