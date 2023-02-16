@@ -14,14 +14,30 @@
 
 void	*myThread(void *vargp)
 {
-	struct timeval	time;
+	t_data	**d;
+	int		i;
+	int		j;
 
-	(void)vargp;
-	if (gettimeofday(&time, NULL) != 0)
-		exit(1);
-	
-	printf("%ld:%ld | Hello from thread\n", time.tv_sec, time.tv_usec);
-	return (0);
+	d = (t_data **)vargp;
+	printf("actual philo = %d\n", (*d)->philo_actual);
+	i = (*d)->philo_actual;
+	j = (*d)->philo_actual + 1;
+	if (j >= (*d)->philo_num)
+		j = 0;
+	if ((*d)->forks[i] == 0 && (*d)->forks[j] == 0)
+	{
+		(*d)->forks[i] = 1;
+		(*d)->forks[j] = 1;
+		pthread_mutex_lock(&(*d)->fork[i]);
+		pthread_mutex_lock(&(*d)->fork[j]);
+		usleep((*d)->eat_time);
+		(*d)->forks[i] = 0;
+		(*d)->forks[j] = 0;
+		pthread_mutex_unlock(&(*d)->fork[i]);
+		pthread_mutex_unlock(&(*d)->fork[j]);
+		printf("Philosopher %d has eaten.\n", (*d)->philo_actual);
+	}
+	return NULL;
 }
 
 int	main(int argc, char **argv)
@@ -29,7 +45,7 @@ int	main(int argc, char **argv)
 	t_data	*d;
 	int		i;
 
-	if (argc < 5)
+	if (argc < 5 || argc > 6)
 		return (0);
 	d = malloc(sizeof(t_data));
 	d->philo_num = ft_atoi(argv[1]);
@@ -44,13 +60,14 @@ int	main(int argc, char **argv)
 
 	d->philo = ft_calloc(d->philo_num, sizeof(pthread_t));
 	d->fork = ft_calloc(d->philo_num, sizeof(pthread_mutex_t));
+	d->forks = ft_calloc(d->philo_num, sizeof(int));
 
 	i = -1;
 	while (++i < d->philo_num)
 	{
-		if (pthread_create(&d->philo[i], NULL, myThread, NULL) != 0)
+		d->philo_actual = i;
+		if (pthread_create(&d->philo[i], NULL, myThread, &d) != 0)
 			return (1);
-		sleep(2);
 	}
 
 	i = -1;
@@ -63,20 +80,13 @@ int	main(int argc, char **argv)
 	i = -1;
 	while (++i < d->philo_num)
 	{
-		if (i == d->philo_num - 1)
-		{
-			if (pthread_mutex_lock(&d->fork[i]) == 0 && pthread_mutex_lock(&d->fork[i - i]) == 0)
-				if (pthread_join(d->philo[i], NULL) != 0)
-					return (2);
-			pthread_mutex_unlock(&d->fork[i - i]);
-		}
-		else if (pthread_mutex_lock(&d->fork[i]) == 0 && pthread_mutex_lock(&d->fork[i + 1]) == 0)
-			if (pthread_join(d->philo[i], NULL) != 0)
-				return (2);
-		pthread_mutex_unlock(&d->fork[i]);
-		pthread_mutex_unlock(&d->fork[i + 1]);
-		printf("Thread %i has finished execution.\n", i);
+		if (pthread_join(d->philo[i], NULL) != 0)
+			return (2);
 	}
+
+	free(d->philo);
+	free(d->fork);
+	free(d->forks);
 	free(d);
 	return (0);
 }

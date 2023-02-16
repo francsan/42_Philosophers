@@ -39,6 +39,8 @@
 typedef struct t_data {
 	pthread_t		*philo;
 	pthread_mutex_t	*fork;
+	int				*forks;
+	int				philo_actual;
 	int				philo_num;
 	int				die_time;
 	int				eat_time;
