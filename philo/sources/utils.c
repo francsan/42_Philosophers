@@ -5,79 +5,46 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/01 21:58:51 by francsan          #+#    #+#             */
-/*   Updated: 2023/02/08 18:21:20 by francisco        ###   ########.fr       */
+/*   Created: 2023/02/27 01:46:09 by francisco         #+#    #+#             */
+/*   Updated: 2023/02/27 02:11:15 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/philo.h"
 
-size_t	ft_strlen(const char *s)
+long long	get_time(t_rules *rules)
 {
-	size_t	len;
+	struct timeval	tv;
+	long long		sec;
+	long long		usec;
 
-	len = 0;
-	while (s[len] != '\0')
-		len++;
-	return (len);
+	gettimeofday(&tv, NULL);
+	sec = tv.tv_sec - rules->start_time.tv_sec;
+	usec = tv.tv_usec - rules->start_time.tv_usec;
+	return ((usec / 1000) + (sec * 1000));
 }
 
-int	ft_atoi(const char *str)
+long long	time_since_last(t_rules *rules, t_philo *philo)
 {
-	long int	i;
-	long int	j;
-
-	i = 1;
-	j = 0;
-	while ((*str >= 9 && *str <= 13) || *str == 32)
-		str++;
-	if (*str == '+' || *str == '-')
-	{
-		if (*str == '-')
-			i = -1;
-		str++;
-	}
-	while (*str >= '0' && *str <= '9')
-	{
-		j = (*str - 48) + (j * 10);
-		str++;
-		if (i * j > 2147483647)
-			error_msg(ERR);
-		if (i * j < -2147483648)
-			error_msg(ERR);
-	}
-	return (i * j);
+	if (philo->meals != 0)
+		return (get_time(rules) - philo->last_meal);
+	return (get_time(rules));
 }
 
-void	*ft_memset(void *b, int c, size_t len)
+long long	time_until_death(t_rules *rules, t_philo *philo)
 {
-	unsigned char	*str;
+	long long	temp;
 
-	str = (unsigned char *)b;
-	while (len > 0)
-	{
-		*str = (unsigned char)c;
-		str++;
-		len--;
-	}
-	return (b);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	size_t	total_size;
-	void	*dst;
-
-	total_size = size * count;
-	dst = malloc(total_size);
-	if (dst == NULL)
+	temp = time_since_last(rules, philo);
+	if (temp > rules->time_die)
 		return (0);
-	ft_memset(dst, 0, total_size);
-	return (dst);
+	return (rules->time_die - temp);
 }
 
-void	error_msg(char *error)
+void	release_forks(t_rules *rules, t_philo *philo)
 {
-	write(2, error, ft_strlen(error));
-	exit(1);
+	rules->forks_bool[philo->left_fork] = 0;
+	rules->forks_bool[philo->right_fork] = 0;
+	pthread_mutex_unlock(&rules->forks[philo->left_fork]);
+	pthread_mutex_unlock(&rules->forks[philo->right_fork]);
 }

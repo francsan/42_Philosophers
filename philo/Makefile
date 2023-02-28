@@ -1,14 +1,14 @@
 #SETUP
 NAME		=	philo
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror
+FLAGS		=	-Wall -Wextra -Werror -pthread
 RM			=	rm -rf
 
 #FILES, DIRECTORIES AND PATHS
 HEADER_F	=	philo.h
 HEADER_DIR	=	headers/
 HEADER		=	$(addprefix $(HEADER_DIR), $(HEADER_F))
-SOURCE_F	=	main.c utils.c
+SOURCE_F	=	actions.c functions.c init_rules.c main.c simulation.c utils.c
 SOURCE_DIR	=	sources/
 SOURCE		=	$(addprefix $(SOURCE_DIR), $(SOURCE_F))
 
