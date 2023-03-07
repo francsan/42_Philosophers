@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_rules.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 01:19:10 by francisco         #+#    #+#             */
-/*   Updated: 2023/02/28 16:54:28 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/07 16:21:56 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	init_philo(t_rules *rules) // sets philosophers struct info (id, fork ids, 
 		rules->philos[i].right_fork = (rules->philos[i].id + 1) % rules->num_philo;
 		rules->philos[i].meals = 0;
 		rules->philos[i].last_meal = 0;
-		printf("philosopher %d / left fork %d || right fork %d\n", i, rules->philos[i].left_fork, rules->philos[i].right_fork);
 	}
 }
 
