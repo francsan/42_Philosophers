@@ -6,7 +6,7 @@
 /*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 01:19:10 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/07 16:21:56 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/07 16:40:06 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 int	init_aloc(t_rules *rules)
 {
-	rules->forks_bool = ft_calloc(rules->num_philo, sizeof(int)); // fork[i] = 0 if free to use OR fork[i] = 1 if being used
+	rules->forks_bool = ft_calloc(rules->num_philo, sizeof(int));
 	if (!rules->forks_bool)
 		return (1);
-	rules->forks = ft_calloc(rules->num_philo, sizeof(pthread_mutex_t)); // fork mutexes
+	rules->forks = ft_calloc(rules->num_philo, sizeof(pthread_mutex_t));
 	if (!rules->forks)
 		return (2);
-	rules->philos = ft_calloc(rules->num_philo, sizeof(t_philo)); // philosophers structs info (id, forks id, meals eaten, time of last meal)
+	rules->philos = ft_calloc(rules->num_philo, sizeof(t_philo));
 	if (!rules->philos)
 		return (3);
-	rules->threads = ft_calloc(rules->num_philo, sizeof(pthread_t)); // threads
+	rules->threads = ft_calloc(rules->num_philo, sizeof(pthread_t));
 	if (!rules->threads)
 		return (4);
 	return (0);
@@ -35,16 +35,16 @@ int	init_mut(t_rules *rules)
 
 	i = rules->num_philo;
 	while (--i >= 0)
-		if (pthread_mutex_init(&rules->forks[i], NULL)) // initializes forks mutexes
+		if (pthread_mutex_init(&rules->forks[i], NULL))
 			return (1);
-	if (pthread_mutex_init(&rules->death_lock, NULL)) // initializes death_lock mutex
+	if (pthread_mutex_init(&rules->death_lock, NULL))
 		return (2);
-	if (pthread_mutex_init(&rules->increment_lock, NULL)) // initializes increment_lock mutex
+	if (pthread_mutex_init(&rules->increment_lock, NULL))
 		return (3);
 	return (0);
 }
 
-void	init_philo(t_rules *rules) // sets philosophers struct info (id, fork ids, meals eaten, last meal time)
+void	init_philo(t_rules *rules)
 {
 	int	i;
 
@@ -53,14 +53,12 @@ void	init_philo(t_rules *rules) // sets philosophers struct info (id, fork ids, 
 	{
 		rules->philos[i].id = i;
 		rules->philos[i].left_fork = rules->philos[i].id;
-		rules->philos[i].right_fork = (rules->philos[i].id + 1) % rules->num_philo;
+		rules->philos[i].right_fork = (rules->philos[i].id + 1) \
+		% rules->num_philo;
 		rules->philos[i].meals = 0;
 		rules->philos[i].last_meal = 0;
 	}
 }
-
-// gets rules from arguments, checks if they're possible to run
-// gets start time
 
 int	init_rules(char **argv, t_rules *rules)
 {
@@ -76,10 +74,10 @@ int	init_rules(char **argv, t_rules *rules)
 		|| rules->time_sleep < 0)
 		return (1);
 	gettimeofday(&rules->start_time, NULL);
-	if (init_aloc(rules)) // allocates memory for forks, philosophers and their threads
+	if (init_aloc(rules))
 		return (2);
-	if (init_mut(rules)) // initializes mutexes
+	if (init_mut(rules))
 		return (3);
-	init_philo(rules); // initializes philosophers structs and fills their info
+	init_philo(rules);
 	return (0);
 }

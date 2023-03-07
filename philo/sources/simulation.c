@@ -6,7 +6,7 @@
 /*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 01:37:21 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/07 16:03:08 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/07 16:26:17 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ void	*simulation(void	*arg)
 	while (1 && rules->num_meals != 0)
 	{
 		if (take_forks(rules, philo))
-			break;
+			break ;
 		if (start_eating(rules, philo))
-			break;
+			break ;
 		if (start_sleeping(rules, philo))
-			break;
+			break ;
 	}
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 01:41:10 by francisco         #+#    #+#             */
-/*   Updated: 2023/02/27 02:25:18 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/07 16:37:04 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,35 +26,10 @@ void	send_to_die(t_rules *rules, t_philo *philo, long long sleep)
 	pthread_mutex_unlock(&rules->death_lock);
 }
 
-int	printer(t_rules *rules, t_philo *philo, char *message)
-{
-	pthread_mutex_lock(&rules->death_lock);
-	if (rules->is_dead)
-	{
-		pthread_mutex_unlock(&rules->death_lock);
-		return (1);
-	}
-	printf("%lld %d %s\n", get_time(rules), philo->id + 1, message);
-	pthread_mutex_unlock(&rules->death_lock);
-	return (0);
-}
-
-int	check_meals(t_rules *rules, t_philo *philo)
-{
-	if (philo->meals == rules->num_meals && rules->is_dead == 0)
-		rules->meals_done++;
-	if (rules->meals_done == rules->num_philo)
-	{
-		rules->is_dead += 1;
-		printf("%lld All Philosophers have eaten enough meals!\n", get_time(rules));
-		return (1);
-	}
-	return (0);
-}
-
 int	take_forks(t_rules *rules, t_philo *philo)
 {
-	while (rules->forks_bool[philo->right_fork] == 1 || rules->forks_bool[philo->left_fork] == 1)
+	while (rules->forks_bool[philo->right_fork] == 1
+		|| rules->forks_bool[philo->left_fork] == 1)
 	{
 		if (time_since_last(rules, philo) > rules->time_die)
 		{
@@ -109,7 +84,8 @@ int	start_eating(t_rules *rules, t_philo *philo)
 		release_forks(rules, philo);
 		return (1);
 	}
-	if (time_since_last(rules, philo) > rules->time_die || rules->time_eat > rules->time_die)
+	if (time_since_last(rules, philo) > rules->time_die
+		|| rules->time_eat > rules->time_die)
 	{
 		release_forks(rules, philo);
 		send_to_die(rules, philo, time_until_death(rules, philo));

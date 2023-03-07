@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/02/27 02:25:50 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/07 16:38:26 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 /* errors */
 
 # define ERR "Error\n"
+# define MEALS "All Philosophers have eaten enough meals!\n"
 
 /* structs */
 
@@ -59,17 +60,14 @@ typedef struct t_rules {
 	pthread_mutex_t	increment_lock;
 	pthread_mutex_t	*forks;
 	struct timeval	start_time;
-	struct t_philo			*philos;
+	struct t_philo	*philos;
 	long long		sim_start;
 }	t_rules;
-
 
 /* sources */
 
 // actions.c
 void		send_to_die(t_rules *rules, t_philo *philo, long long sleep);
-int			printer(t_rules *rules, t_philo *philo, char *message);
-int			check_meals(t_rules *rules, t_philo *philo);
 int			take_forks(t_rules *rules, t_philo *philo);
 int			take_second_fork(t_rules *rules, t_philo *philo);
 int			start_eating(t_rules *rules, t_philo *philo);
@@ -94,6 +92,13 @@ void		init_threads(t_rules *rules);
 void		join_threads(t_rules *rules);
 void		destroy_threads(t_rules *rules);
 int			start_simulation(t_rules *rules);
+
+// utils_2.c
+int			printer(t_rules *rules, t_philo *philo, char *message);
+int			check_meals(t_rules *rules, t_philo *philo);
+void		free_all(t_rules *rules);
+int			ft_isdigit(int c);
+int			check_all_digit(char **argv);
 
 // utils.c
 long long	get_time(t_rules *rules);
