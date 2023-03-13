@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/07 16:38:26 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/13 19:44:26 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,80 +30,78 @@
 // pthread_mutex_lock, pthread_mutex_unlock
 # include <pthread.h>
 
-/* errors */
-
-# define ERR "Error\n"
-# define MEALS "All Philosophers have eaten enough meals!\n"
+/* messages */
+# define FORK "has taken a fork"
+# define EAT "is eating"
+# define SLEEP "is sleeping"
+# define THINK "is thinking"
+# define MEALS "All Philosophers have finished eating"
+# define DEAD "is dead"
 
 /* structs */
 
-typedef struct t_philo {
-	int			id;
-	int			right_fork;
-	int			left_fork;
-	int			meals;
-	long		last_meal;
-	pthread_t	thread_id;
+typedef struct t_philo
+{
+	int		id;
+	int		l_fork_id;
+	int		r_fork_id;
+	int		num_meals;
+	long	last_meal_time;
 }	t_philo;
 
-typedef struct t_rules {
-	int				num_philo;
+typedef struct t_rules
+{
+	int				num_philos;
 	int				time_die;
 	int				time_eat;
 	int				time_sleep;
-	int				num_meals;
-	int				is_dead;
-	int				meals_done;
+	int				max_meals;
+	int				finished_meals;
+	int				death_bool;
 	int				*forks_bool;
 	pthread_t		*threads;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	increment_lock;
 	pthread_mutex_t	*forks;
-	struct timeval	start_time;
 	struct t_philo	*philos;
+	struct timeval	start_time;
 	long long		sim_start;
 }	t_rules;
 
 /* sources */
 
 // actions.c
-void		send_to_die(t_rules *rules, t_philo *philo, long long sleep);
-int			take_forks(t_rules *rules, t_philo *philo);
-int			take_second_fork(t_rules *rules, t_philo *philo);
-int			start_eating(t_rules *rules, t_philo *philo);
-int			start_sleeping(t_rules *rules, t_philo *philo);
+void		send_to_die(t_rules *r, t_philo *p, long long sleep);
+int			take_forks(t_rules *r, t_philo *p);
+int			take_second_fork(t_rules *r, t_philo *p);
+int			start_eating(t_rules *r, t_philo *p);
+int			start_sleeping(t_rules *r, t_philo *p);
 
-// functions.c
-size_t		ft_strlen(const char *s);
+// arg_handling.c
+int			check_args(char **argv);
+int			init_alloc(t_rules *r);
+int			init_mutexes(t_rules *r);
+void		init_philos(t_rules *r);
+int			init_rules(t_rules *r, char **argv);
+
+// sim_utils.c
+long long	get_time(t_rules *r);
+long long	time_since_last(t_rules *r, t_philo *p);
+long long	time_to_die(t_rules *r, t_philo *p);
+int			printer(t_rules *r, t_philo *p, char *msg);
+void		release_forks(t_rules *r, t_philo *p);
+int			check_meals(t_rules *r, t_philo *p);
+
+// simulation.c
+void		*simulation(void *arg);
+void		start_threads(t_rules *r);
+void		destroy_threads(t_rules *r);
+void		run_simulation(t_rules *r);
+
+// utils.c
+int			ft_isdigit(int c);
 int			ft_atoi(const char *str);
 void		*ft_memset(void *b, int c, size_t len);
 void		*ft_calloc(size_t count, size_t size);
-void		error_msg(char *error);
-
-// init_rules.c
-int			init_aloc(t_rules *rules);
-int			init_mut(t_rules *rules);
-void		init_philo(t_rules *rules);
-int			init_rules(char **argv, t_rules *rules);
-
-// simulation.c
-void		*simulation(void	*arg);
-void		init_threads(t_rules *rules);
-void		join_threads(t_rules *rules);
-void		destroy_threads(t_rules *rules);
-int			start_simulation(t_rules *rules);
-
-// utils_2.c
-int			printer(t_rules *rules, t_philo *philo, char *message);
-int			check_meals(t_rules *rules, t_philo *philo);
-void		free_all(t_rules *rules);
-int			ft_isdigit(int c);
-int			check_all_digit(char **argv);
-
-// utils.c
-long long	get_time(t_rules *rules);
-long long	time_since_last(t_rules *rules, t_philo *philo);
-long long	time_until_death(t_rules *rules, t_philo *philo);
-void		release_forks(t_rules *rules, t_philo *philo);
 
 #endif

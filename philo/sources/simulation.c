@@ -3,82 +3,68 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/27 01:37:21 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/07 16:26:17 by francsan         ###   ########.fr       */
+/*   Created: 2023/03/10 22:59:32 by francisco         #+#    #+#             */
+/*   Updated: 2023/03/13 19:52:30 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/philo.h"
 
-void	*simulation(void	*arg)
+void	*simulation(void *arg)
 {
-	t_rules		*rules;
-	t_philo		*philo;
-	static int	counter = 0;
+	t_rules		*r;
+	t_philo		*p;
+	static int	philo = 0;
 
-	rules = (t_rules *)arg;
-	pthread_mutex_lock(&rules->increment_lock);
-	philo = &rules->philos[counter++];
-	if (philo->id % 2 == 0)
+	r = (t_rules *)arg;
+	pthread_mutex_lock(&r->increment_lock);
+	p = &r->philos[philo];
+	philo++;
+	if (p->id % 2 == 0)
 		usleep(5 * 1000);
-	pthread_mutex_unlock(&rules->increment_lock);
-	while (1 && rules->num_meals != 0)
+	pthread_mutex_unlock(&r->increment_lock);
+	while (1 && r->finished_meals != r->max_meals)
 	{
-		if (take_forks(rules, philo))
+		if (take_forks(r, p))
 			break ;
-		if (start_eating(rules, philo))
+		if (start_eating(r, p))
 			break ;
-		if (start_sleeping(rules, philo))
+		if (start_sleeping(r, p))
 			break ;
 	}
 	return (0);
 }
 
-void	init_threads(t_rules *rules)
+void	start_threads(t_rules *r)
 {
 	int	i;
 
-	i = 0;
-	while (i < rules->num_philo)
-	{
-		pthread_create(&(rules->threads[i]), NULL, simulation, (void *)rules);
-		i++;
-	}
+	i = -1;
+	while (++i < r->num_philos)
+		pthread_create(&r->threads[i], NULL, simulation, (void *)r);
+	i = -1;
+	while (++i < r->num_philos)
+		pthread_join(r->threads[i], NULL);
 }
 
-void	join_threads(t_rules *rules)
+void	destroy_threads(t_rules *r)
 {
 	int	i;
 
-	i = 0;
-	while (i < rules->num_philo)
-	{
-		pthread_join(rules->threads[i], NULL);
-		i++;
-	}
+	i = -1;
+	while (++i < r->num_philos)
+		pthread_mutex_destroy(&r->forks[i]);
+	pthread_mutex_destroy(&r->death_lock);
+	pthread_mutex_destroy(&r->increment_lock);
 }
 
-void	destroy_threads(t_rules *rules)
+void	run_simulation(t_rules *r)
 {
-	int	i;
-
-	i = 0;
-	while (i < rules->num_philo)
-	{
-		pthread_mutex_destroy(&rules->forks[i]);
-		i++;
-	}
-	pthread_mutex_destroy(&rules->death_lock);
-	pthread_mutex_destroy(&rules->increment_lock);
-}
-
-int	start_simulation(t_rules *rules)
-{
-	rules->sim_start = get_time(rules);
-	init_threads(rules);
-	join_threads(rules);
-	destroy_threads(rules);
-	return (0);
+	r->sim_start = get_time(r);
+	r->finished_meals = 0;
+	r->death_bool = 0;
+	start_threads(r);
+	destroy_threads(r);
 }

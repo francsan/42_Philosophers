@@ -3,29 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 21:12:52 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/07 16:41:21 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/10 22:59:19 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/philo.h"
 
+static void	free_alloc(t_rules *r)
+{
+	free(r->philos);
+	free(r->threads);
+	free(r->forks);
+	free(r->forks_bool);
+	free(r);
+}
+
 int	main(int argc, char **argv)
 {
-	t_rules	*rules;
+	t_rules	*r;
 
-	if (argc != 5 && argc != 6)
-		return (0);
-	if (check_all_digit(argv))
-		return (1);
-	rules = ft_calloc(1, sizeof(t_rules));
-	if (!rules)
+	if (argc == 5 || argc == 6)
+	{
+		if (check_args(argv))
+			return (1);
+	}
+	else
 		return (2);
-	if (init_rules(argv, rules))
+	r = ft_calloc(1, sizeof(t_rules));
+	if (!r)
 		return (3);
-	start_simulation(rules);
-	free_all(rules);
+	if (init_rules(r, argv))
+		return (4);
+	run_simulation(r);
+	free_alloc(r);
 	return (0);
 }
