@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 18:29:12 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/13 19:45:08 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/14 22:59:03 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	send_to_die(t_rules *r, t_philo *p, long long sleep)
 
 int	take_forks(t_rules *r, t_philo *p)
 {
-	while (r->forks_bool[p->l_fork_id] == 1 || r->forks_bool[p->r_fork_id] == 1)
+	while (pthread_mutex_lock(&r->forks[p->l_fork_id]) != 0)
 	{
 		if (time_since_last(r, p) > r->time_die)
 		{
@@ -36,11 +36,8 @@ int	take_forks(t_rules *r, t_philo *p)
 			return (1);
 		}
 	}
-	pthread_mutex_lock(&r->forks[p->l_fork_id]);
-	r->forks_bool[p->l_fork_id] = 1;
 	if (printer(r, p, FORK))
 	{
-		r->forks_bool[p->l_fork_id] = 0;
 		pthread_mutex_unlock(&r->forks[p->l_fork_id]);
 		return (0);
 	}
@@ -51,7 +48,13 @@ int	take_forks(t_rules *r, t_philo *p)
 
 int	take_second_fork(t_rules *r, t_philo *p)
 {
-	while (r->forks_bool[p->r_fork_id] == 1)
+	if (p->r_fork_id == 0 && ((p->id != r->num_philos - 1) || p->id == 0))
+	{
+		pthread_mutex_unlock(&r->forks[p->l_fork_id]);
+		send_to_die(r, p, time_to_die(r, p));
+		return (1);
+	}
+	while (pthread_mutex_lock(&r->forks[p->r_fork_id]) != 0)
 	{
 		if (time_since_last(r, p) > r->time_die)
 		{
@@ -60,17 +63,9 @@ int	take_second_fork(t_rules *r, t_philo *p)
 			return (1);
 		}
 	}
-	pthread_mutex_lock(&r->forks[p->r_fork_id]);
-	r->forks_bool[p->r_fork_id] = 1;
 	if (printer(r, p, FORK))
 	{
 		release_forks(r, p);
-		return (1);
-	}
-	if (time_since_last(r, p) > r->time_die)
-	{
-		release_forks(r, p);
-		send_to_die(r, p, time_to_die(r, p));
 		return (1);
 	}
 	return (0);

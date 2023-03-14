@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 21:12:52 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/10 22:59:19 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/14 22:27:42 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ static void	free_alloc(t_rules *r)
 	free(r->philos);
 	free(r->threads);
 	free(r->forks);
-	free(r->forks_bool);
 	free(r);
 }
 

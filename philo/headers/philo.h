@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/13 19:44:26 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/14 22:27:25 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ typedef struct t_rules
 	int				max_meals;
 	int				finished_meals;
 	int				death_bool;
-	int				*forks_bool;
 	pthread_t		*threads;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	increment_lock;

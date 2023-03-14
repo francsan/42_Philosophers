@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 22:59:32 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/13 19:52:30 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/14 22:30:46 by francsan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	*simulation(void *arg)
 	p = &r->philos[philo];
 	philo++;
 	if (p->id % 2 == 0)
-		usleep(5 * 1000);
+		usleep(1000);
 	pthread_mutex_unlock(&r->increment_lock);
 	while (1 && r->finished_meals != r->max_meals)
 	{
