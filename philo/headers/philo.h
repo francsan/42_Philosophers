@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/14 22:27:25 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/15 17:34:44 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct t_rules
 	int				max_meals;
 	int				finished_meals;
 	int				death_bool;
+	int				*forks_bool;
 	pthread_t		*threads;
 	pthread_mutex_t	death_lock;
 	pthread_mutex_t	increment_lock;
@@ -70,7 +71,7 @@ typedef struct t_rules
 /* sources */
 
 // actions.c
-void		send_to_die(t_rules *r, t_philo *p, long long sleep);
+void		send_to_die(t_rules *r, t_philo *p);
 int			take_forks(t_rules *r, t_philo *p);
 int			take_second_fork(t_rules *r, t_philo *p);
 int			start_eating(t_rules *r, t_philo *p);
@@ -87,6 +88,7 @@ int			init_rules(t_rules *r, char **argv);
 long long	get_time(t_rules *r);
 long long	time_since_last(t_rules *r, t_philo *p);
 long long	time_to_die(t_rules *r, t_philo *p);
+void		ft_usleep(long long time);
 int			printer(t_rules *r, t_philo *p, char *msg);
 void		release_forks(t_rules *r, t_philo *p);
 int			check_meals(t_rules *r, t_philo *p);

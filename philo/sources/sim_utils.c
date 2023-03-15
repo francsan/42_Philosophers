@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sim_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 00:05:37 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/14 23:00:25 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/15 17:57:38 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,25 @@ long long	time_to_die(t_rules *r, t_philo *p)
 	return (r->time_die - temp);
 }
 
+void	ft_usleep(long long time)
+{
+	struct timeval	start_time;
+	struct timeval	current_time;
+	long long	start;
+	long long	current;
+
+	gettimeofday(&start_time, NULL);
+	start = ((start_time.tv_usec / 1000) + (start_time.tv_sec * 1000));
+	while (1)
+	{
+		gettimeofday(&current_time, NULL);
+		current = ((current_time.tv_usec / 1000) + (current_time.tv_sec * 1000));
+		if (current - start >= time / 1000)
+			break ;
+		usleep(5);
+	}
+}
+
 int	printer(t_rules *r, t_philo *p, char *msg)
 {
 	pthread_mutex_lock(&r->death_lock);
@@ -56,6 +75,8 @@ int	printer(t_rules *r, t_philo *p, char *msg)
 
 void	release_forks(t_rules *r, t_philo *p)
 {
+	r->forks_bool[p->l_fork_id] = 0;
+	r->forks_bool[p->r_fork_id] = 0;
 	pthread_mutex_unlock(&r->forks[p->l_fork_id]);
 	pthread_mutex_unlock(&r->forks[p->r_fork_id]);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   arg_handling.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francsan <francsan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 22:16:50 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/14 22:27:37 by francsan         ###   ########.fr       */
+/*   Updated: 2023/03/15 02:46:53 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ int	check_args(char **argv)
 
 int	init_alloc(t_rules *r)
 {
+	r->forks_bool = ft_calloc(r->num_philos, sizeof(int));
+	if (!r->forks_bool)
+		return (1);
 	r->forks = ft_calloc(r->num_philos, sizeof(pthread_mutex_t));
 	if (!r->forks)
 		return (2);
