@@ -36,7 +36,7 @@ void	ft_usleep(long long time)
 	{
 		gettimeofday(&current_time, NULL);
 		current = ((current_time.tv_usec / 1000) + (current_time.tv_sec * 1000));
-		if (current - start >= time / 1000)
+		if (current - start >= time)
 			break ;
 		usleep(50);
 	}
@@ -73,7 +73,7 @@ int	check_all(t_rules *r, t_philo *p)
 	if ((get_time(r) - p->last_eat) > r->time_die)
 	{
 		r->dead_flag = 1;
-		printf("%s%lld ms -> Philosopher %d %s\n", RED, get_time(r), p->id, DEAD);
+		printf("%lld ms | %d %s\n", get_time(r), p->id, DEAD);
 		pthread_mutex_unlock(&r->m_dead_philo);
 		return (0);
 	}

@@ -1,7 +1,7 @@
 #SETUP
 NAME		=	philo
 CC			=	cc
-FLAGS		=	-Wall -Wextra -Werror -pthread #-O3 -march=native
+FLAGS		=	-Wall -Wextra -Werror -pthread -O3 -march=native -g -fsanitize=address
 RM			=	rm -rf
 
 #FILES, DIRECTORIES AND PATHS

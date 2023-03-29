@@ -30,7 +30,7 @@ int	main(int argc, char **argv)
 		return (4);
 	run_simulation(r);
 	if (r->eat_flag == r->num_philos)
-		printf("%s%lld ms -> %s\n", GREEN, get_time(r), MEALS);
+		printf("%lld ms | %s\n", get_time(r), MEALS);
 	free_and_destroy(r);
 	return (0);
 }

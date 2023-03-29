@@ -14,9 +14,9 @@
 
 void	philo_one(t_rules *r, t_philo *p)
 {
-	printf("%s%lld ms -> Philosopher %d %s\n", CYAN, get_time(r), p->id, FORK);
-	ft_usleep(r->time_die * 1000);
-	printf("%s%lld ms -> Philosopher %d %s\n", RED, get_time(r), p->id, DEAD);
+	printf("%lld ms | %d %s\n", get_time(r), p->id, FORK);
+	ft_usleep(r->time_die);
+	printf("%lld ms | %d %s\n", get_time(r), p->id, DEAD);
 	pthread_mutex_lock(&r->m_dead_philo);
 	r->dead_flag = 1;
 	pthread_mutex_unlock(&r->m_dead_philo);
@@ -31,9 +31,9 @@ void	*simulation(void *arg)
 	r = (t_rules *)arg;
 	pthread_mutex_lock(&r->m_increment);
 	p = &r->philos[i++];
-	if (p->id % 2 == 0)
-		ft_usleep(15000);
 	pthread_mutex_unlock(&r->m_increment);
+	if (p->id % 2 == 0)
+		ft_usleep(15);
 	while (check_all(r, p))
 	{
 		if (r->num_philos == 1)
@@ -45,7 +45,7 @@ void	*simulation(void *arg)
 			if (check_all(r, p))
 				philo_sleep(r, p);
 			if (check_all(r, p))
-				printf("%s%lld ms -> Philosopher %d %s\n", YELLOW, get_time(r), p->id, THINK);
+				printf("%lld ms | %d %s\n", get_time(r), p->id, THINK);
 		}
 	}
 	return (NULL);
@@ -57,7 +57,7 @@ void	run_simulation(t_rules *r)
 	int				i;
 
 	if (r->max_meals == 0)
-		exit(0);
+		return ;
 	gettimeofday(&st, NULL);
 	r->start_time = (st.tv_sec * 1000) + (st.tv_usec / 1000);
 	i = -1;
@@ -65,7 +65,7 @@ void	run_simulation(t_rules *r)
 	{
 		r->philos[i].last_eat = r->start_time;
 		if (pthread_create(&r->philos[i].philo_thread, NULL, &simulation, r))
-			exit(1);
+			return ;
 	}
 	i = -1;
 	while (++i < r->num_philos)

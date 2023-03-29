@@ -20,14 +20,13 @@ void	check_fork(t_rules *r, t_philo *p, int pos)
 		r->forks[pos] = 1;
 		p->fork += 1;
 		if (check_all(r, p))
-			printf("%s%lld ms -> Philosopher %d %s\n", CYAN, get_time(r), p->id, FORK);
+			printf("%lld ms | %d %s\n", get_time(r), p->id, FORK);
 	}
 	pthread_mutex_unlock(&r->m_fork[pos]);
 }
 
 void	philo_eat(t_rules *r, t_philo *p)
 {
-	ft_usleep(100);
 	while (p->fork != 2 && check_all(r, p))
 	{
 		check_fork(r, p, p->left);
@@ -36,12 +35,11 @@ void	philo_eat(t_rules *r, t_philo *p)
 	if (check_all(r, p))
 	{
 		p->last_eat = get_time(r);
-		ft_usleep(200);
 		if (check_all(r, p))
-			printf("%s%lld ms -> Philosopher %d %s\n", GREEN, get_time(r), p->id, EAT);
+			printf("%lld ms | %d %s\n", get_time(r), p->id, EAT);
 		p->eat_counter += 1;
 		check_all(r, p);
-		ft_usleep(r->time_eat * 1000);
+		ft_usleep(r->time_eat);
 		pthread_mutex_lock(&r->m_fork[p->left]);
 		r->forks[p->left] = 0;
 		pthread_mutex_unlock(&r->m_fork[p->left]);
@@ -59,8 +57,8 @@ void	philo_sleep(t_rules *r, t_philo *p)
 	if (r->dead_flag == 0 && r->eat_flag != r->num_philos)
 	{
 		pthread_mutex_unlock(&r->m_check_eat);
-		printf("%s%lld ms -> Philosopher %d %s\n", BLUE, get_time(r), p->id, SLEEP);
-		ft_usleep(r->time_sleep * 1000);
+		printf("%lld ms | %d %s\n", get_time(r), p->id, SLEEP);
+		ft_usleep(r->time_sleep);
 	}
 	else
 		pthread_mutex_unlock(&r->m_check_eat);
