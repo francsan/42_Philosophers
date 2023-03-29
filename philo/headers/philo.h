@@ -30,6 +30,14 @@
 // pthread_mutex_lock, pthread_mutex_unlock
 # include <pthread.h>
 
+/* colors */
+# define RED "\033[0;31m"
+# define GREEN "\033[0;32m"
+# define YELLOW "\033[0;33m"
+# define BLUE "\033[0;34m"
+# define CYAN "\033[96m"
+# define DEFAULT "\033[0m"
+
 /* messages */
 # define FORK "has taken a fork"
 # define EAT "is eating"
@@ -70,17 +78,16 @@ typedef struct t_rules
 	pthread_mutex_t	m_dead_philo;
 	pthread_mutex_t	m_check_eat;
 	pthread_mutex_t	m_counter;
+	pthread_mutex_t	m_increment;
 	t_philo			*philos;
 }	t_rules;
 
 /* sources */
 
 // actions.c
-void		send_to_die(t_rules *r, t_philo *p);
-int			take_forks(t_rules *r, t_philo *p);
-int			take_second_fork(t_rules *r, t_philo *p);
-int			start_eating(t_rules *r, t_philo *p);
-int			start_sleeping(t_rules *r, t_philo *p);
+void		check_fork(t_rules *r, t_philo *p, int pos);
+void		philo_eat(t_rules *r, t_philo *philo);
+void		philo_sleep(t_rules *r, t_philo *philo);
 
 // init_rules.c
 int			check_args(char **argv);
@@ -91,17 +98,14 @@ int			init_rules(t_rules *r, char **argv);
 
 // sim_utils.c
 long long	get_time(t_rules *r);
-long long	time_since_last(t_rules *r, t_philo *p);
-long long	time_to_die(t_rules *r, t_philo *p);
 void		ft_usleep(long long time);
-int			printer(t_rules *r, t_philo *p, char *msg);
-void		release_forks(t_rules *r, t_philo *p);
-int			check_meals(t_rules *r, t_philo *p);
+int			check_eat(t_rules *r, t_philo *p);
+int			check_all(t_rules *r, t_philo *p);
+void		free_and_destroy(t_rules *r);
 
 // simulation.c
+void		philo_one(t_rules *r, t_philo *p);
 void		*simulation(void *arg);
-void		start_threads(t_rules *r);
-void		destroy_threads(t_rules *r);
 void		run_simulation(t_rules *r);
 
 // utils.c

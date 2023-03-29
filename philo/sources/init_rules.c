@@ -36,7 +36,7 @@ int	init_alloc(t_rules *r)
 {
 	r->forks = ft_calloc(r->num_philos, sizeof(int));
 	if (!r->forks)
-		return(1);
+		return (1);
 	r->philos = ft_calloc(r->num_philos, sizeof(t_philo));
 	if (!r->philos)
 		return (2);
@@ -75,7 +75,7 @@ int	init_mutexes(t_rules *r)
 	i = -1;
 	while (++i < r->num_philos)
 	{
-		if (pthread_mutex_init(&r->m_fork[i], NULL) != 0);
+		if (pthread_mutex_init(&r->m_fork[i], NULL) != 0)
 			return (1);
 	}
 	if (pthread_mutex_init(&r->m_dead_philo, NULL) != 0)
@@ -84,6 +84,8 @@ int	init_mutexes(t_rules *r)
 		return (3);
 	if (pthread_mutex_init(&r->m_counter, NULL) != 0)
 		return (4);
+	if (pthread_mutex_init(&r->m_increment, NULL) != 0)
+		return (5);
 	return (0);
 }
 

@@ -15,38 +15,20 @@
 long long	get_time(t_rules *r)
 {
 	struct timeval	time;
-	long long		usec;
-	long long		sec;
+	long long		current;
 
+	(void)r;
 	gettimeofday(&time, NULL);
-	usec = time.tv_usec - r->start_time.tv_usec;
-	sec = time.tv_sec - r->start_time.tv_sec;
-	return ((usec / 1000) + (sec * 1000));
-}
-
-long long	time_since_last(t_rules *r, t_philo *p)
-{
-	if (p->num_meals != 0)
-		return (get_time(r) - p->last_meal_time);
-	return (get_time(r));
-}
-
-long long	time_to_die(t_rules *r, t_philo *p)
-{
-	long long	temp;
-
-	temp = time_since_last(r, p);
-	if (temp > r->time_die)
-		return (0);
-	return (r->time_die - temp);
+	current = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (current - r->start_time);
 }
 
 void	ft_usleep(long long time)
 {
 	struct timeval	start_time;
 	struct timeval	current_time;
-	long long	start;
-	long long	current;
+	long long		start;
+	long long		current;
 
 	gettimeofday(&start_time, NULL);
 	start = ((start_time.tv_usec / 1000) + (start_time.tv_sec * 1000));
@@ -60,38 +42,62 @@ void	ft_usleep(long long time)
 	}
 }
 
-int	printer(t_rules *r, t_philo *p, char *msg)
+int	check_eat(t_rules *r, t_philo *p)
 {
-	pthread_mutex_lock(&r->death_lock);
-	if (r->death_bool)
+	pthread_mutex_lock(&r->m_check_eat);
+	if (p->eat_lock == 0)
 	{
-		pthread_mutex_unlock(&r->death_lock);
-		return (1);
+		if (p->eat_counter == r->max_meals)
+		{
+			r->eat_flag += 1;
+			p->eat_lock = 1;
+		}
+		if (r->eat_flag == r->num_philos)
+		{
+			pthread_mutex_unlock(&r->m_check_eat);
+			return (0);
+		}
 	}
-	printf("%lld %d %s\n", get_time(r), p->id + 1, msg);
-	pthread_mutex_unlock(&r->death_lock);
-	return (0);
+	pthread_mutex_unlock(&r->m_check_eat);
+	return (1);
 }
 
-void	release_forks(t_rules *r, t_philo *p)
+int	check_all(t_rules *r, t_philo *p)
 {
-	r->forks_bool[p->l_fork_id] = 0;
-	r->forks_bool[p->r_fork_id] = 0;
-	pthread_mutex_unlock(&r->forks[p->l_fork_id]);
-	pthread_mutex_unlock(&r->forks[p->r_fork_id]);
-}
-
-int	check_meals(t_rules *r, t_philo *p)
-{
-	if (r->max_meals == -1)
+	pthread_mutex_lock(&r->m_dead_philo);
+	if (r->dead_flag == 1 || r->eat_flag == r->num_philos)
+	{
+		pthread_mutex_unlock(&r->m_dead_philo);
 		return (0);
-	if (p->num_meals == r->max_meals && r->death_bool == 0)
-		r->finished_meals++;
-	if (r->finished_meals == r->num_philos)
-	{
-		r->death_bool = 1;
-		printf("%lld %s\n", get_time(r), MEALS);
-		return (1);
 	}
-	return (0);
+	if ((get_time(r) - p->last_eat) > r->time_die)
+	{
+		r->dead_flag = 1;
+		printf("%s%lld ms -> Philosopher %d %s\n", RED, get_time(r), p->id, DEAD);
+		pthread_mutex_unlock(&r->m_dead_philo);
+		return (0);
+	}
+	if (!check_eat(r, p))
+	{
+		pthread_mutex_unlock(&r->m_dead_philo);
+		return (0);
+	}
+	pthread_mutex_unlock(&r->m_dead_philo);
+	return (1);
+}
+
+void	free_and_destroy(t_rules *r)
+{
+	int	i;
+
+	i = -1;
+	while (++i < r->num_philos)
+		pthread_mutex_destroy(&r->m_fork[i]);
+	pthread_mutex_destroy(&r->m_dead_philo);
+	pthread_mutex_destroy(&r->m_check_eat);
+	pthread_mutex_destroy(&r->m_counter);
+	pthread_mutex_destroy(&r->m_increment);
+	free(r->m_fork);
+	free(r->forks);
+	free(r->philos);
 }

@@ -12,15 +12,6 @@
 
 #include "../headers/philo.h"
 
-static void	free_alloc(t_rules *r)
-{
-	free(r->philos);
-	free(r->threads);
-	free(r->forks_bool);
-	free(r->forks);
-	free(r);
-}
-
 int	main(int argc, char **argv)
 {
 	t_rules	*r;
@@ -37,7 +28,9 @@ int	main(int argc, char **argv)
 		return (3);
 	if (init_rules(r, argv))
 		return (4);
-	run_simulation(r); // STILL WORKING ON IT
-	free_alloc(r); // STILL WORKING ON IT
+	run_simulation(r);
+	if (r->eat_flag == r->num_philos)
+		printf("%s%lld ms -> %s\n", GREEN, get_time(r), MEALS);
+	free_and_destroy(r);
 	return (0);
 }
