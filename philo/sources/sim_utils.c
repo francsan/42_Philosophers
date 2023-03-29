@@ -25,17 +25,17 @@ long long	get_time(t_rules *r)
 
 void	ft_usleep(long long time)
 {
-	struct timeval	start_time;
-	struct timeval	current_time;
+	struct timeval	s_time;
+	struct timeval	c_time;
 	long long		start;
 	long long		current;
 
-	gettimeofday(&start_time, NULL);
-	start = ((start_time.tv_usec / 1000) + (start_time.tv_sec * 1000));
+	gettimeofday(&s_time, NULL);
+	start = ((s_time.tv_usec / 1000) + (s_time.tv_sec * 1000));
 	while (1)
 	{
-		gettimeofday(&current_time, NULL);
-		current = ((current_time.tv_usec / 1000) + (current_time.tv_sec * 1000));
+		gettimeofday(&c_time, NULL);
+		current = ((c_time.tv_usec / 1000) + (c_time.tv_sec * 1000));
 		if (current - start >= time)
 			break ;
 		usleep(50);
