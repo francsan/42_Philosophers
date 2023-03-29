@@ -6,7 +6,7 @@
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 21:12:52 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/15 02:47:01 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/29 15:40:56 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int argc, char **argv)
 		return (3);
 	if (init_rules(r, argv))
 		return (4);
-	run_simulation(r);
-	free_alloc(r);
+	run_simulation(r); // STILL WORKING ON IT
+	free_alloc(r); // STILL WORKING ON IT
 	return (0);
 }

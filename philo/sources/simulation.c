@@ -6,7 +6,7 @@
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 22:59:32 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/15 17:59:55 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/29 14:32:55 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void	*simulation(void *arg)
 	static int	philo = 0;
 
 	r = (t_rules *)arg;
-	pthread_mutex_lock(&r->increment_lock);
+	// pthread_mutex_lock(&r->increment_lock);
 	p = &r->philos[philo++];
 	if (p->id % 2 == 0)
-		ft_usleep(1000);
-	pthread_mutex_unlock(&r->increment_lock);
+		ft_usleep(15000);
+	// pthread_mutex_unlock(&r->increment_lock);
 	while (1 && r->finished_meals != r->max_meals)
 	{
 		if (take_forks(r, p))

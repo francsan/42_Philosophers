@@ -6,7 +6,7 @@
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 22:16:50 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/15 02:46:53 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/29 15:40:22 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,34 +34,14 @@ int	check_args(char **argv)
 
 int	init_alloc(t_rules *r)
 {
-	r->forks_bool = ft_calloc(r->num_philos, sizeof(int));
-	if (!r->forks_bool)
-		return (1);
-	r->forks = ft_calloc(r->num_philos, sizeof(pthread_mutex_t));
+	r->forks = ft_calloc(r->num_philos, sizeof(int));
 	if (!r->forks)
-		return (2);
-	r->threads = ft_calloc(r->num_philos, sizeof(pthread_t));
-	if (!r->threads)
-		return (3);
+		return(1);
 	r->philos = ft_calloc(r->num_philos, sizeof(t_philo));
 	if (!r->philos)
-		return (4);
-	return (0);
-}
-
-int	init_mutexes(t_rules *r)
-{
-	int	i;
-
-	i = -1;
-	while (++i < r->num_philos)
-	{
-		if (pthread_mutex_init(&r->forks[i], NULL) != 0)
-			return (1);
-	}
-	if (pthread_mutex_init(&r->death_lock, NULL) != 0)
 		return (2);
-	if (pthread_mutex_init(&r->increment_lock, NULL) != 0)
+	r->m_fork = ft_calloc(r->num_philos, sizeof(pthread_mutex_t));
+	if (!r->m_fork)
 		return (3);
 	return (0);
 }
@@ -73,12 +53,38 @@ void	init_philos(t_rules *r)
 	i = -1;
 	while (++i < r->num_philos)
 	{
-		r->philos[i].id = i;
-		r->philos[i].l_fork_id = i;
-		r->philos[i].r_fork_id = (i + 1) % r->num_philos;
-		r->philos[i].num_meals = 0;
-		r->philos[i].last_meal_time = 0;
+		r->philos[i].id = i + 1;
+		r->philos[i].time_die = r->time_die;
+		r->philos[i].eat_counter = 0;
+		r->philos[i].eat_lock = 0;
+		r->philos[i].last_eat = 0;
+		r->philos[i].philo_dead = 0;
+		r->philos[i].fork = 0;
+		if (i < r->num_philos)
+		{
+			r->philos[i].left = i;
+			r->philos[i].right = (i + 1) % r->num_philos;
+		}
 	}
+}
+
+int	init_mutexes(t_rules *r)
+{
+	int	i;
+
+	i = -1;
+	while (++i < r->num_philos)
+	{
+		if (pthread_mutex_init(&r->m_fork[i], NULL) != 0);
+			return (1);
+	}
+	if (pthread_mutex_init(&r->m_dead_philo, NULL) != 0)
+		return (2);
+	if (pthread_mutex_init(&r->m_check_eat, NULL) != 0)
+		return (3);
+	if (pthread_mutex_init(&r->m_counter, NULL) != 0)
+		return (4);
+	return (0);
 }
 
 int	init_rules(t_rules *r, char **argv)
@@ -91,11 +97,9 @@ int	init_rules(t_rules *r, char **argv)
 		r->max_meals = ft_atoi(argv[5]);
 	else
 		r->max_meals = -1;
-	gettimeofday(&r->start_time, NULL);
 	if (init_alloc(r))
 		return (1);
-	if (init_mutexes(r))
-		return (2);
 	init_philos(r);
+	init_mutexes(r);
 	return (0);
 }

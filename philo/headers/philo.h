@@ -6,7 +6,7 @@
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 20:26:32 by francsan          #+#    #+#             */
-/*   Updated: 2023/03/15 17:34:44 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/29 15:42:01 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,30 +42,35 @@
 
 typedef struct t_philo
 {
-	int		id;
-	int		l_fork_id;
-	int		r_fork_id;
-	int		num_meals;
-	long	last_meal_time;
+	pthread_t	philo_thread;
+	long long	last_eat;
+	int			id;
+	int			eat_counter;
+	int			eat_lock;
+	int			time_die;
+	int			fork;
+	int			right;
+	int			left;
+	int			philo_dead;
 }	t_philo;
 
 typedef struct t_rules
 {
+	long long		start_time;
 	int				num_philos;
 	int				time_die;
 	int				time_eat;
 	int				time_sleep;
+	int				eat_flag;
+	int				dead_flag;
+	int				print_flag;
 	int				max_meals;
-	int				finished_meals;
-	int				death_bool;
-	int				*forks_bool;
-	pthread_t		*threads;
-	pthread_mutex_t	death_lock;
-	pthread_mutex_t	increment_lock;
-	pthread_mutex_t	*forks;
-	struct t_philo	*philos;
-	struct timeval	start_time;
-	long long		sim_start;
+	int				*forks;
+	pthread_mutex_t	*m_fork;
+	pthread_mutex_t	m_dead_philo;
+	pthread_mutex_t	m_check_eat;
+	pthread_mutex_t	m_counter;
+	t_philo			*philos;
 }	t_rules;
 
 /* sources */
@@ -77,11 +82,11 @@ int			take_second_fork(t_rules *r, t_philo *p);
 int			start_eating(t_rules *r, t_philo *p);
 int			start_sleeping(t_rules *r, t_philo *p);
 
-// arg_handling.c
+// init_rules.c
 int			check_args(char **argv);
 int			init_alloc(t_rules *r);
-int			init_mutexes(t_rules *r);
 void		init_philos(t_rules *r);
+int			init_mutexes(t_rules *r);
 int			init_rules(t_rules *r, char **argv);
 
 // sim_utils.c

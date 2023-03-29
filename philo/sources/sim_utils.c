@@ -6,7 +6,7 @@
 /*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 00:05:37 by francisco         #+#    #+#             */
-/*   Updated: 2023/03/15 17:57:38 by francisco        ###   ########.fr       */
+/*   Updated: 2023/03/29 14:30:31 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	ft_usleep(long long time)
 		current = ((current_time.tv_usec / 1000) + (current_time.tv_sec * 1000));
 		if (current - start >= time / 1000)
 			break ;
-		usleep(5);
+		usleep(50);
 	}
 }
 
